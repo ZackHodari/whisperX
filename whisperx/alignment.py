@@ -262,6 +262,31 @@ def align(
                 start = round(char_seg.start * ratio + t1, 3)
                 end = round(char_seg.end * ratio + t1, 3)
                 score = round(char_seg.score, 3)
+            else:
+                prev_char_seg = None
+                next_char_seg = None
+
+                # Find the previous character segment in clean_cdx
+                for i in range(cdx - 1, -1, -1):
+                    if i in segment["clean_cdx"]:
+                        prev_char_seg = char_segments[segment["clean_cdx"].index(i)]
+                        break
+
+                # Find the next character segment in clean_cdx
+                for i in range(cdx + 1, len(text)):
+                    if i in segment["clean_cdx"]:
+                        next_char_seg = char_segments[segment["clean_cdx"].index(i)]
+                        break
+
+                if prev_char_seg is not None:
+                    start = round(prev_char_seg.end * ratio + t1, 3)
+                elif cdx == 0:
+                    start = round(t1, 3)
+
+                if next_char_seg is not None:
+                    end = round(next_char_seg.start * ratio + t1, 3)
+                elif cdx == len(text) - 1:
+                    end = round(t2, 3)
 
             char_segments_arr.append(
                 {
